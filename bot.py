@@ -19,14 +19,14 @@ async def receive_message(client, message):
     user_id = message.from_user.id
     text = message.text
     
-    # Simpan pesan yang diterima ke dalam dictionary dengan key = message_id
-    user_message_dict[message.message_id] = user_id
+    # Simpan pesan yang diterima ke dalam dictionary dengan key = message.id
+    user_message_dict[message.id] = user_id
     
     # Kirim pesan ke owner dan simpan ID pesan yang diterima owner
     await client.send_message(
         owner_id, 
         f"Pesan dari {message.from_user.first_name} (ID: {user_id}):\n{text}",
-        reply_to_message_id=message.message_id
+        reply_to_message_id=message.id
     )
 
     # Beri tahu pengguna bahwa pesan telah diteruskan ke owner
@@ -36,8 +36,8 @@ async def receive_message(client, message):
 @app.on_message(filters.private & filters.user(owner_id) & filters.reply)
 async def reply_to_user(client, message):
     # Cek apakah pesan yang dibalas ada di dalam dictionary
-    if message.reply_to_message and message.reply_to_message.message_id in user_message_dict:
-        user_id = user_message_dict[message.reply_to_message.message_id]
+    if message.reply_to_message and message.reply_to_message.id in user_message_dict:
+        user_id = user_message_dict[message.reply_to_message.id]
         
         # Kirim pesan balasan ke pengguna
         await client.send_message(user_id, message.text)
